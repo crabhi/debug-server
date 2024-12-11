@@ -14,6 +14,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	ip := r.RemoteAddr
 	fmt.Printf("Client IP: %s\n", ip)
 	fmt.Fprintf(w, "Hello, your IP address is %s\n", ip)
+	printServerIps(w)
 }
 
 func printServerIps(w io.Writer) {
