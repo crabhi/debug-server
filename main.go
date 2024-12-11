@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -13,6 +14,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	ip := r.RemoteAddr
 	fmt.Printf("Client IP: %s\n", ip)
 	fmt.Fprintf(w, "Hello, your IP address is %s\n", ip)
+}
+
+func printServerIps(w io.Writer) {
 	fmt.Fprintf(w, "Server IPs:\n")
 	for _, ip := range ips {
 		fmt.Fprintf(w, "  - %s\n", ip)
@@ -40,6 +44,8 @@ func main() {
 			ips = append(ips, ip.String())
 		}
 	}
+
+	printServerIps(log.Writer())
 
 	http.HandleFunc("/", handler)
 	fmt.Println("Starting server on :8080")
