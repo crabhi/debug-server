@@ -1,0 +1,54 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: debugserver
+spec:
+  selector:
+    app: debugserver
+  ports:
+    - name: debugserver
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: debugserver
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: debugserver
+  template:
+    metadata:
+      labels:
+        app: debugserver
+    spec:
+      containers:
+      - name: main
+        image: sedlakf/debugserver:v1
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: 1m
+            memory: 50Mi
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: debugserver
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: debugserver
+            port:
+              number: 80
